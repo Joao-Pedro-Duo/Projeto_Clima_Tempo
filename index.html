@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Previsão do Tempo</title>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+</head>
+<body>
+
+    <main>
+        <h1>Previsão do Tempo</h1>
+
+        <form id="form-clima">
+
+            <label for="cidade">Digite o nome da cidade:</label>
+
+            <input type="text"
+             id="cidade" 
+             name="cidade" 
+             placeholder="Ex: São Paulo" required
+            >
+
+            <button type="submit">Buscar</button>
+
+
+
+        </form>
+
+        <section id="resultado">
+
+        </section>
+
+
+    </main>
+
+    <script src="./assets/js/api.js"></script>
+
+    
+</body>
+</html>

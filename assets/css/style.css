@@ -1,0 +1,129 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Variáveis */
+:root {
+
+    /* Paleta de Cores - Azul, Verde, Amarelo */
+    --blue-0: #2A7B9B;
+    --green-50: #57C785;
+    --yellow-100: #EDDD53;
+
+    /* Cores Neutras */
+    --gray-200: #e8e8e8;
+    --gray-400: #505861;
+    --black: #171717;
+    --white: #FAF7FF;
+ 
+    /* Cores de Estado */
+    --error: #e63946;
+ 
+    /* Espaçamentos */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+ 
+    /* Tamanhos de Fonte */
+    --text-sm: 0.75rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.5rem;
+ 
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-xl: 2rem;
+    --radius-full: 50%;
+ 
+    /* Animação Padrão */
+    --transition-default: all 0.3s ease;
+}
+
+html{
+  scroll-behavior: smooth;
+}
+ 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-sm);
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  background-color: var(--white);
+  color: var(--black);
+}
+ 
+main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    padding: var(--spacing-lg);
+    background: linear-gradient(90deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--text-2xl);
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+label {
+    font-size: var(--text-base);
+}
+
+input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    font-size: var(--text-base);
+    font-family: inherit;
+    border: 1px solid var(--blue-0);
+    border-radius: var(--radius-md);
+}
+
+button {
+    padding: var(--spacing-sm);
+    font-family: inherit;
+    font-size: var(--text-base);
+    font-weight: 600;
+    background-color: var(--blue-0);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+button:hover {
+    background-color: var(--green-50);
+}
+
+input:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--yellow-100);
+    outline-offset: 2px;
+}
+
+#resultado {
+    margin-top: var(--spacing-lg);
+    text-align: center;
+}
