@@ -333,3 +333,34 @@ button {
     }
 
 }
+
+.temperatura-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--spacing-md);
+
+    width: 100%;
+    min-height: 160px;
+
+    background: linear-gradient(
+        135deg,
+        var(--blue-100),
+        #dcebf2
+    );
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+#icone-clima {
+    font-size: 4.5rem;
+    color: var(--blue-500);
+}
+
+#temperatura {
+    font-size: 5rem;
+    font-weight: 500;
+}

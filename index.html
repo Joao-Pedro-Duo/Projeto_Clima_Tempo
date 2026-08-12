@@ -7,6 +7,8 @@
 
     <title>Previsão do Tempo</title>
 
+    <link rel="stylesheet" href="./assets/css/weather-icons.min.css">
+
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
@@ -53,10 +55,17 @@
         <section id="resultado-container" class="hidden">
 
             <div class="temperatura-card">
+
+                <i id="icone-clima" class="wi"></i>
+
                 <span id="temperatura"></span>
             </div>
 
             <h2 id="localizacao"></h2>
+
+            <p id="descricao-clima"></p>
+
+            <p id="data-consulta"></p>
 
             <button
                 type="button"
