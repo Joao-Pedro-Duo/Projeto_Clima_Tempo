@@ -2,45 +2,90 @@
 <html lang="pt-br">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Previsão do Tempo</title>
 
     <link rel="stylesheet" href="./assets/css/style.css">
-
 </head>
+
 <body>
 
-    <main>
-        <h1>Previsão do Tempo</h1>
+    <main class="card">
 
-        <form id="form-clima">
+        <!-- Tela de busca -->
+        <section id="busca-container">
 
-            <label for="cidade">Digite o nome da cidade:</label>
+            <h1>Previsão do Tempo</h1>
 
-            <input type="text"
-             id="cidade" 
-             name="cidade" 
-             placeholder="Ex: São Paulo" required
-            >
+            <form id="form-clima">
 
-            <button type="submit">Buscar</button>
+                <div class="form-group">
 
+                    <label for="cidade" class="sr-only">
+                        Digite o nome da cidade
+                    </label>
 
+                    <input
+                        type="text"
+                        id="cidade"
+                        name="cidade"
+                        placeholder="Digite o nome da cidade"
+                        autocomplete="off"
+                        required
+                    >
 
-        </form>
+                    <button type="submit">
+                        Buscar
+                    </button>
 
-        <section id="resultado">
+                </div>
+
+            </form>
+
+            <div id="mensagem-erro"></div>
 
         </section>
 
+
+        <!-- Tela de resultado -->
+        <section id="resultado-container" class="hidden">
+
+            <div class="temperatura-card">
+                <span id="temperatura"></span>
+            </div>
+
+            <h2 id="localizacao"></h2>
+
+            <button
+                type="button"
+                id="botao-voltar"
+                class="botao-voltar"
+                aria-label="Voltar para pesquisa"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M3 11.5 12 4l9 7.5"></path>
+                    <path d="M5 10v10h14V10"></path>
+                </svg>
+            </button>
+
+        </section>
 
     </main>
 
     <script src="./assets/js/api.js"></script>
 
-    
 </body>
+
 </html>

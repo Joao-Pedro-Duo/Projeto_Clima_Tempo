@@ -1,6 +1,15 @@
 const form = document.getElementById('form-clima');
 const inputCidade = document.getElementById('cidade');
-const resultado = document.getElementById('resultado');
+
+const buscaContainer = document.getElementById('busca-container');
+const resultadoContainer = document.getElementById('resultado-container');
+
+const temperatura = document.getElementById('temperatura');
+const localizacao = document.getElementById('localizacao');
+
+const mensagemErro = document.getElementById('mensagem-erro');
+
+const botaoVoltar = document.getElementById('botao-voltar');
 
 form.addEventListener("submit", async (event) => {
 
@@ -24,11 +33,19 @@ form.addEventListener("submit", async (event) => {
             coordenadas.longitude
         );
 
-        exibirClima(coordenadas.nome, clima);
+        exibirClima(
+            coordenadas.nome,
+            coordenadas.pais,
+            clima
+        );  
 
     } catch (error) {
 
-        resultado.innerHTML = `<p>${error.message}</p>`;
+        mensagemErro.innerHTML = `
+            <p class="erro">
+                ${error.message} Tente novamente.
+            </p>
+        `;
 
         console.error(error);
     }
@@ -66,6 +83,7 @@ async function buscarCoordenadas(cidade) {
 
     return {
         nome: cidadeEncontrada.name,
+        pais: cidadeEncontrada.country,
         latitude: cidadeEncontrada.latitude,
         longitude: cidadeEncontrada.longitude
     };
@@ -96,10 +114,26 @@ async function buscarClima(latitude, longitude) {
     return dados.current;
 }
 
-function exibirClima(cidade, clima) {
+function exibirClima(cidade, pais, clima) {
 
-    resultado.innerHTML = `
-        <h2>${cidade}</h2>
-        <p>Temperatura atual: ${clima.temperature_2m} °C</p>
-    `;
+    temperatura.textContent = `${Math.round(clima.temperature_2m)}°`;
+
+    localizacao.textContent = `${cidade}, ${pais}`;
+
+    buscaContainer.classList.add('hidden');
+
+    resultadoContainer.classList.remove('hidden');
 }
+
+botaoVoltar.addEventListener("click", () => {
+
+    resultadoContainer.classList.add('hidden');
+
+    buscaContainer.classList.remove('hidden');
+
+    inputCidade.value = "";
+
+    mensagemErro.innerHTML = "";
+
+    inputCidade.focus();
+});
