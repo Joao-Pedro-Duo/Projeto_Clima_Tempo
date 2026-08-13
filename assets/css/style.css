@@ -1,4 +1,6 @@
-/* Reset */
+/* =========================
+   RESET
+========================= */
 
 * {
     margin: 0;
@@ -7,23 +9,47 @@
 }
 
 
-/* Variáveis */
+/* =========================
+   VARIÁVEIS
+========================= */
 
 :root {
 
-    /* Cores */
-    --blue-50: #d9f3fc;
-    --blue-100: #b8deee;
-    --blue-500: #4a90e2;
-    --blue-700: #315f8c;
+    /* Paleta principal */
+    --primary-blue: #2A7B9B;
+    --primary-green: #57C785;
+    --primary-yellow: #EDDD53;
 
-    --white: #ffffff;
-    --gray-100: #f5f5f5;
-    --gray-500: #667085;
-    --gray-900: #1f2d3d;
+    /* Variações claras */
+    --blue-light: #D6EDF5;
+    --green-light: #DDF4E7;
+    --yellow-light: #F8F2C7;
 
-    --error: #c82345;
-    --error-background: #ffe1e1;
+    /* Variações escuras */
+    --blue-dark: #1F6078;
+    --green-dark: #3C9C66;
+    --yellow-dark: #B8A62F;
+
+    /* Tema noturno - versões profundas da mesma paleta */
+    --night-blue: #102D38;
+    --night-green: #174B46;
+    --night-yellow: #4A4824;
+
+    /* Cores neutras */
+    --white: #FFFFFF;
+    --gray-100: #F7F8F8;
+    --gray-200: #E8ECEE;
+    --gray-400: #98A2A8;
+    --gray-500: #66757D;
+    --gray-900: #1F2D33;
+
+    /* Temperaturas */
+    --temperature-max: #B8A62F;
+    --temperature-min: #2A7B9B;
+
+    /* Erros */
+    --error: #C82345;
+    --error-background: #FFE1E1;
 
     /* Espaçamentos */
     --spacing-xs: 0.5rem;
@@ -32,7 +58,14 @@
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
 
-    /* Border radius */
+    /* Fontes */
+    --text-sm: 0.8rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+
+    /* Border Radius */
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
     --radius-lg: 1.5rem;
@@ -42,41 +75,95 @@
 }
 
 
+/* =========================
+   BODY / TEMAS
+========================= */
+
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 
     min-height: 100vh;
 
     padding: var(--spacing-sm);
 
     font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
 
     color: var(--gray-900);
 
+    /* Fundo suave utilizando as 3 cores principais */
     background: linear-gradient(
-        180deg,
-        #83c9e7 0%,
-        #cceefa 100%
+        135deg,
+        var(--blue-light) 0%,
+        var(--green-light) 50%,
+        var(--yellow-light) 100%
+    );
+
+    transition: background 0.6s ease;
+}
+
+
+/* Tema durante o dia */
+
+body.tema-dia {
+    background: linear-gradient(
+        135deg,
+        var(--blue-light) 0%,
+        var(--green-light) 50%,
+        var(--yellow-light) 100%
     );
 }
 
 
-/* Card principal */
+/* Tema durante a noite */
+
+body.tema-noite {
+    background: linear-gradient(
+        135deg,
+        var(--night-blue) 0%,
+        var(--night-green) 50%,
+        var(--night-yellow) 100%
+    );
+}
+
+
+/* =========================
+   CARD PRINCIPAL
+========================= */
 
 .card {
     width: 100%;
     max-width: 540px;
 
+    margin-top: auto;
+    margin-bottom: var(--spacing-lg);
+
     padding: 3rem 2rem;
 
-    background-color: var(--white);
-
+    /*
+     * Interior branco + borda com o gradiente principal solicitado:
+     * #2A7B9B -> #57C785 -> #EDDD53
+     */
+    border: 4px solid transparent;
     border-radius: var(--radius-lg);
 
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+    background:
+        linear-gradient(
+            var(--white),
+            var(--white)
+        ) padding-box,
+        linear-gradient(
+            90deg,
+            rgba(42, 123, 155, 1) 0%,
+            rgba(87, 199, 133, 1) 50%,
+            rgba(237, 221, 83, 1) 100%
+        ) border-box;
+
+    box-shadow:
+        0 20px 45px
+        rgba(31, 96, 120, 0.16);
 }
 
 
@@ -90,12 +177,14 @@ body {
     text-align: center;
 
     font-size: 2.3rem;
-    color: var(--blue-700);
+
+    color: var(--primary-blue);
 }
 
 
 .form-group {
     display: flex;
+
     gap: var(--spacing-sm);
 }
 
@@ -108,10 +197,9 @@ input {
     padding: 1.2rem 1.3rem;
 
     font-family: inherit;
-    font-size: 1rem;
+    font-size: var(--text-base);
 
     color: var(--gray-900);
-
     background-color: var(--gray-100);
 
     border: 2px solid transparent;
@@ -127,12 +215,23 @@ input::placeholder {
 
 
 input:focus {
-    border-color: var(--blue-500);
-    outline: none;
-
     background-color: var(--white);
+
+    border-color: var(--primary-blue);
+
+    outline: none;
 }
 
+
+input:focus-visible {
+    outline: 3px solid var(--primary-yellow);
+    outline-offset: 2px;
+}
+
+
+/* =========================
+   BOTÕES
+========================= */
 
 button {
     font-family: inherit;
@@ -145,25 +244,33 @@ button {
 }
 
 
+button:focus-visible {
+    outline: 3px solid var(--primary-yellow);
+    outline-offset: 3px;
+}
+
+
 .form-group button {
     padding: 1rem 2rem;
 
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
 
     color: var(--white);
-    background-color: var(--blue-500);
+    background-color: var(--primary-blue);
 
     border-radius: var(--radius-md);
 
-    box-shadow: 0 7px 15px rgba(74, 144, 226, 0.25);
+    box-shadow:
+        0 7px 15px
+        rgba(42, 123, 155, 0.25);
 }
 
 
 .form-group button:hover {
-    transform: translateY(-2px);
+    background-color: var(--primary-green);
 
-    background-color: var(--blue-700);
+    transform: translateY(-2px);
 }
 
 
@@ -173,7 +280,7 @@ button {
 
 
 /* =========================
-   ERRO
+   MENSAGEM DE ERRO
 ========================= */
 
 #mensagem-erro {
@@ -182,12 +289,11 @@ button {
 
 
 .erro {
-    padding: 1rem;
+    padding: var(--spacing-sm);
 
     text-align: center;
 
     color: var(--error);
-
     background-color: var(--error-background);
 
     border-left: 5px solid var(--error);
@@ -213,19 +319,32 @@ button {
     align-items: center;
     justify-content: center;
 
-    width: 100%;
+    gap: var(--spacing-md);
 
+    width: 100%;
     min-height: 160px;
 
+    /* Gradiente leve derivado das 3 cores principais */
     background: linear-gradient(
         135deg,
-        var(--blue-100),
-        #dcebf2
+        var(--blue-light) 0%,
+        var(--green-light) 55%,
+        var(--yellow-light) 100%
     );
 
+    border: 1px solid rgba(42, 123, 155, 0.15);
     border-radius: var(--radius-lg);
 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    box-shadow:
+        0 10px 20px
+        rgba(42, 123, 155, 0.10);
+}
+
+
+#icone-clima {
+    font-size: 4.5rem;
+
+    color: var(--primary-blue);
 }
 
 
@@ -240,11 +359,31 @@ button {
 #localizacao {
     text-align: center;
 
-    font-size: 2rem;
+    font-size: var(--text-2xl);
 
-    color: var(--blue-700);
+    color: var(--primary-blue);
 }
 
+
+#descricao-clima {
+    text-align: center;
+
+    font-size: var(--text-lg);
+
+    color: var(--gray-900);
+}
+
+
+#data-consulta {
+    text-align: center;
+
+    color: var(--gray-500);
+}
+
+
+/* =========================
+   BOTÃO VOLTAR
+========================= */
 
 .botao-voltar {
     display: flex;
@@ -255,24 +394,36 @@ button {
     height: 58px;
 
     color: var(--white);
-    background-color: var(--blue-500);
+    background-color: var(--primary-blue);
 
     border-radius: var(--radius-md);
 
-    box-shadow: 0 7px 15px rgba(74, 144, 226, 0.25);
+    box-shadow:
+        0 7px 15px
+        rgba(42, 123, 155, 0.25);
 }
 
 
 .botao-voltar:hover {
-    transform: translateY(-2px);
+    background-color: var(--primary-green);
 
-    background-color: var(--blue-700);
+    transform: translateY(-2px);
 }
+
+
+.botao-voltar:active {
+    transform: translateY(0);
+}
+
+
+/* =========================
+   PREVISÃO DOS PRÓXIMOS DIAS
+========================= */
 
 .previsao-container {
     width: 100%;
 
-    margin-top: var(--spacing-lg);
+    margin-top: var(--spacing-sm);
 }
 
 
@@ -281,9 +432,9 @@ button {
 
     text-align: center;
 
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
 
-    color: var(--blue-700);
+    color: var(--primary-blue);
 }
 
 
@@ -309,15 +460,35 @@ button {
 
     padding: var(--spacing-sm);
 
-    background-color: var(--white);
+    background: linear-gradient(
+        135deg,
+        var(--white) 0%,
+        var(--gray-100) 100%
+    );
 
+    border: 1px solid rgba(42, 123, 155, 0.12);
     border-radius: var(--radius-md);
 
     box-shadow:
         0 4px 14px
-        rgba(0, 0, 0, 0.08);
+        rgba(42, 123, 155, 0.08);
+
+    transition: var(--transition-default);
 }
 
+
+.previsao-card:hover {
+    border-color: var(--primary-green);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(87, 199, 133, 0.16);
+}
+
+
+/* Data */
 
 .previsao-data {
     display: flex;
@@ -326,7 +497,7 @@ button {
 
 
 .previsao-data strong {
-    color: var(--blue-700);
+    color: var(--primary-blue);
 
     text-transform: capitalize;
 }
@@ -338,6 +509,8 @@ button {
     color: var(--gray-500);
 }
 
+
+/* Clima */
 
 .previsao-clima {
     display: flex;
@@ -353,16 +526,18 @@ button {
 
     font-size: 2.3rem;
 
-    color: var(--blue-500);
+    color: var(--primary-blue);
 }
 
 
 .previsao-clima span {
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
 
     color: var(--gray-500);
 }
 
+
+/* Temperaturas */
 
 .previsao-temperaturas {
     display: flex;
@@ -374,43 +549,79 @@ button {
 }
 
 
+.temperatura-maxima,
+.temperatura-minima {
+    color: var(--gray-900);
+}
+
+
 .temperatura-maxima::first-letter {
-    color: #e76f51;
+    color: var(--yellow-dark);
 }
 
 
 .temperatura-minima::first-letter {
-    color: #3498db;
+    color: var(--primary-blue);
 }
 
+
+/* =========================
+   FOOTER
+========================= */
+
 .app-footer {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     max-width: 1000px;
 
     margin-top: auto;
+
     padding: var(--spacing-md);
 
     text-align: center;
-    justify-content: center;
 
     font-size: var(--text-sm);
-    color: var(--gray-400);
+
+    color: var(--gray-500);
 }
+
 
 .app-footer p {
     margin: var(--spacing-xs) 0;
 }
 
+
 .app-footer a {
-    color: var(--blue-500);
+    color: var(--primary-blue);
+
     font-weight: 600;
+
     text-decoration: none;
+
+    transition: var(--transition-default);
 }
 
+
 .app-footer a:hover {
+    color: var(--primary-green);
+
     text-decoration: underline;
+}
+
+
+/* Footer no tema noturno */
+
+body.tema-noite .app-footer {
+    color: var(--blue-light);
+}
+
+
+body.tema-noite .app-footer a {
+    color: var(--primary-yellow);
+}
+
+
+body.tema-noite .app-footer a:hover {
+    color: var(--primary-green);
 }
 
 
@@ -448,6 +659,11 @@ button {
 
 @media (max-width: 600px) {
 
+    body {
+        padding: var(--spacing-sm);
+    }
+
+
     .card {
         padding: 2rem 1.3rem;
     }
@@ -473,34 +689,15 @@ button {
     }
 
 
-    #localizacao {
-        font-size: 1.5rem;
+    #icone-clima {
+        font-size: 3.5rem;
     }
 
-}
 
-.temperatura-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    #localizacao {
+        font-size: var(--text-xl);
+    }
 
-    gap: var(--spacing-md);
-
-    width: 100%;
-    min-height: 160px;
-
-    background: linear-gradient(
-        135deg,
-        var(--blue-100),
-        #dcebf2
-    );
-
-    border-radius: var(--radius-lg);
-
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-}
-
-@media (max-width: 600px) {
 
     .previsao-card {
         grid-template-columns:
@@ -524,14 +721,40 @@ button {
     .previsao-clima .wi {
         font-size: 2rem;
     }
+
+
+    .app-footer {
+        padding:
+            var(--spacing-md)
+            var(--spacing-xs);
+
+        font-size: 0.75rem;
+    }
 }
 
-#icone-clima {
-    font-size: 4.5rem;
-    color: var(--blue-500);
-}
 
-#temperatura {
-    font-size: 5rem;
-    font-weight: 500;
+@media (max-width: 420px) {
+
+    .temperatura-card {
+        min-height: 135px;
+
+        gap: var(--spacing-sm);
+    }
+
+
+    #temperatura {
+        font-size: 3.5rem;
+    }
+
+
+    #icone-clima {
+        font-size: 3rem;
+    }
+
+
+    .previsao-card {
+        gap: var(--spacing-xs);
+
+        padding: 0.8rem;
+    }
 }
