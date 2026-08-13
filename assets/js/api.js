@@ -1,57 +1,110 @@
-const form = document.getElementById('form-clima');
-const inputCidade = document.getElementById('cidade');
+if (typeof document !== "undefined") {
 
-const buscaContainer = document.getElementById('busca-container');
-const resultadoContainer = document.getElementById('resultado-container');
+    const form = document.getElementById('form-clima');
+    const inputCidade = document.getElementById('cidade');
 
-const temperatura = document.getElementById('temperatura');
-const localizacao = document.getElementById('localizacao');
-const descricaoClima = document.getElementById('descricao-clima');
-const dataConsulta = document.getElementById('data-consulta');
-const iconeClima = document.getElementById('icone-clima');
+    const buscaContainer = document.getElementById('busca-container');
+    const resultadoContainer = document.getElementById('resultado-container');
 
-const mensagemErro = document.getElementById('mensagem-erro');
-const botaoVoltar = document.getElementById('botao-voltar');
+    const temperatura = document.getElementById('temperatura');
+    const localizacao = document.getElementById('localizacao');
+    const descricaoClima = document.getElementById('descricao-clima');
+    const dataConsulta = document.getElementById('data-consulta');
+    const iconeClima = document.getElementById('icone-clima');
+
+    const mensagemErro = document.getElementById('mensagem-erro');
+    const botaoVoltar = document.getElementById('botao-voltar');
 
 
-form.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", async (event) => {
 
-    // Impede o recarregamento da página
-    event.preventDefault();
+        // Impede o recarregamento da página
+        event.preventDefault();
 
-    // Obtém a cidade digitada
-    const cidade = inputCidade.value.trim();
+        // Obtém a cidade digitada
+        const cidade = inputCidade.value.trim();
 
-    if (!cidade) {
-        return;
-    }
+        if (!cidade) {
+            return;
+        }
 
-    // Limpa possíveis mensagens de erro anteriores
+        // Limpa possíveis mensagens de erro anteriores
+        mensagemErro.innerHTML = "";
+
+        try {
+
+            const coordenadas = await buscarCoordenadas(cidade);
+
+            const clima = await buscarClima(
+                coordenadas.latitude,
+                coordenadas.longitude
+            );
+
+            exibirClima(coordenadas, clima);
+
+        } catch (error) {
+
+            mensagemErro.innerHTML = `
+                <p class="erro">
+                    ${error.message}
+                </p>
+            `;
+
+            console.error(error);
+        }
+
+
+    });
+
+    botaoVoltar.addEventListener("click", () => {
+
+    resultadoContainer.classList.add("hidden");
+
+    buscaContainer.classList.remove("hidden");
+
+    inputCidade.value = "";
+
     mensagemErro.innerHTML = "";
 
-    try {
-
-        const coordenadas = await buscarCoordenadas(cidade);
-
-        const clima = await buscarClima(
-            coordenadas.latitude,
-            coordenadas.longitude
-        );
-
-        exibirClima(coordenadas, clima);
-
-    } catch (error) {
-
-        mensagemErro.innerHTML = `
-            <p class="erro">
-                ${error.message}
-            </p>
-        `;
-
-        console.error(error);
-    }
+    inputCidade.focus();
 });
 
+}
+
+async function consultarClima(cidade) {
+
+    const cidadeTratada =
+        typeof cidade === "string"
+            ? cidade.trim()
+            : "";
+
+    if (!cidadeTratada) {
+        throw new Error("Informe o nome de uma cidade.");
+    }
+
+    const coordenadas =
+        await buscarCoordenadas(cidadeTratada);
+
+    const clima = await buscarClima(
+        coordenadas.latitude,
+        coordenadas.longitude
+    );
+
+    return {
+        cidade: coordenadas.nome,
+        pais: coordenadas.pais,
+        latitude: coordenadas.latitude,
+        longitude: coordenadas.longitude,
+
+        temperatura: clima.temperature_2m,
+        weatherCode: clima.weather_code,
+        isDay: clima.is_day,
+        dataHora: clima.time,
+
+        descricao:
+            obterDescricaoClima(clima.weather_code)
+    };
+}
 
 async function buscarCoordenadas(cidade) {
 
@@ -60,10 +113,15 @@ async function buscarCoordenadas(cidade) {
 
     try {
 
-        const response = await fetch(url);
+        const response = await fetchComTimeout(url);
+
+        if (response.status === 429) {
+        throw new Error(
+            "Limite de requisições excedido.");
+        }
 
         if (!response.ok) {
-            throw new Error("Erro ao buscar a cidade.");
+            throw new Error("Falha da API de geolocalização.");
         }
 
         const dados = await response.json();
@@ -99,16 +157,27 @@ async function buscarClima(latitude, longitude) {
 
     try {
 
-        const response = await fetch(url);
+        const response = await fetchComTimeout(url);
+
+        if (response.status === 429) {
+        throw new Error(
+            "Limite de requisições excedido.");
+        }
 
         if (!response.ok) {
-            throw new Error("Erro ao buscar os dados do clima.");
+            throw new Error("Falha da API de previsão do tempo.");
         }
 
         const dados = await response.json();
 
-        if (!dados.current) {
-            throw new Error("Dados meteorológicos indisponíveis.");
+        if (
+            !dados.current ||
+            dados.current.temperature_2m === undefined ||
+            dados.current.weather_code === undefined ||
+            dados.current.is_day === undefined ||
+            dados.current.time === undefined
+        ) {
+            throw new Error("Formato inesperado da resposta da API.");
         }
 
         return dados.current;
@@ -223,6 +292,46 @@ function obterIconeClima(codigo, isDay) {
     return "wi-cloud";
 }
 
+async function fetchComTimeout(url, timeout = 5000) {
+
+    const controller = new AbortController();
+
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+
+    try {
+
+        const response = await fetch(
+            url,
+            {
+                signal: controller.signal
+            }
+        );
+
+        return response;
+
+    } catch (error) {
+
+        if (error.name === "AbortError") {
+            throw new Error(
+                "Tempo limite da requisição excedido."
+            );
+        }
+
+        if (error instanceof TypeError) {
+            throw new Error(
+                "Erro de rede. Verifique sua conexão."
+            );
+        }
+
+        throw error;
+
+    } finally {
+
+        clearTimeout(timeoutId);
+    }
+}
 
 function formatarData(data) {
 
@@ -288,16 +397,15 @@ function exibirClima(coordenadas, clima) {
     resultadoContainer.classList.remove("hidden");
 }
 
-
-botaoVoltar.addEventListener("click", () => {
-
-    resultadoContainer.classList.add("hidden");
-
-    buscaContainer.classList.remove("hidden");
-
-    inputCidade.value = "";
-
-    mensagemErro.innerHTML = "";
-
-    inputCidade.focus();
-});
+if (
+    typeof module !== "undefined" &&
+    module.exports
+) {
+    module.exports = {
+        consultarClima,
+        buscarCoordenadas,
+        buscarClima,
+        fetchComTimeout,
+        obterDescricaoClima
+    };
+}
