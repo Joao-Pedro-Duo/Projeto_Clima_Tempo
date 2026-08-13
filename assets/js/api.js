@@ -1,3 +1,14 @@
+/**
+ * @fileoverview
+ * Responsável pela consulta e tratamento de dados meteorológicos
+ * utilizando as APIs de Geocodificação e Previsão do Tempo
+ * da Open-Meteo.
+ *
+ * O arquivo também contém funções responsáveis pelo tratamento
+ * de erros, interpretação dos códigos meteorológicos e atualização
+ * da interface da aplicação.
+ */
+
 
 const GEOCODING_API =
     "https://geocoding-api.open-meteo.com/v1/search";
@@ -112,6 +123,23 @@ if(botaoVoltar) {
     });
 }
 
+
+/**
+ * Consulta as informações meteorológicas de uma cidade.
+ *
+ * @async
+ * @param {string} cidade - Nome da cidade pesquisada.
+ * @returns {Promise<Object>} Objeto contendo localização e
+ * informações meteorológicas atuais.
+ *
+ * @throws {Error} Se o nome da cidade estiver vazio.
+ * @throws {Error} Se a cidade não for encontrada.
+ * @throws {Error} Se ocorrer falha na API ou na conexão.
+ *
+ * @example
+ * const clima = await consultarClima("São Paulo");
+ * console.log(clima.temperatura);
+ */
 async function consultarClima(cidade) {
 
     const cidadeTratada =
@@ -147,6 +175,25 @@ async function consultarClima(cidade) {
     };
 }
 
+
+/**
+ * Busca as coordenadas geográficas de uma cidade.
+ *
+ * @async
+ * @param {string} cidade - Nome da cidade pesquisada.
+ * @returns {Promise<Object>} Objeto contendo nome, país,
+ * latitude e longitude.
+ *
+ * @throws {Error} Se a cidade não for encontrada.
+ * @throws {Error} Se o limite de requisições for excedido.
+ * @throws {Error} Se ocorrer falha na API.
+ *
+ * @example
+ * const coordenadas =
+ *     await buscarCoordenadas("São Paulo");
+ *
+ * console.log(coordenadas.latitude);
+ */
 async function buscarCoordenadas(cidade) {
 
     const url =
@@ -181,6 +228,24 @@ async function buscarCoordenadas(cidade) {
 }
 
 
+/**
+ * Busca os dados meteorológicos atuais de uma localização.
+ *
+ * @async
+ * @param {number} latitude - Latitude da localização.
+ * @param {number} longitude - Longitude da localização.
+ * @returns {Promise<Object>} Dados meteorológicos atuais.
+ *
+ * @throws {Error} Se o limite de requisições for excedido.
+ * @throws {Error} Se ocorrer falha na API.
+ * @throws {Error} Se a resposta possuir formato inesperado.
+ *
+ * @example
+ * const clima =
+ *     await buscarClima(-23.55, -46.63);
+ *
+ * console.log(clima.temperature_2m);
+ */
 async function buscarClima(latitude, longitude) {
 
     const url =
@@ -224,6 +289,18 @@ async function buscarClima(latitude, longitude) {
 }
 
 
+/**
+ * Converte o código meteorológico em uma descrição textual.
+ *
+ * @param {number} codigo -
+ * Código meteorológico retornado pela Open-Meteo.
+ *
+ * @returns {string} Descrição da condição meteorológica.
+ *
+ * @example
+ * obterDescricaoClima(3);
+ * // Retorna "Nublado"
+ */
 function obterDescricaoClima(codigo) {
 
     if (codigo === 0) {
@@ -274,6 +351,21 @@ function obterDescricaoClima(codigo) {
 }
 
 
+/**
+ * Obtém a classe do ícone correspondente ao clima.
+ *
+ * @param {number} codigo -
+ * Código meteorológico retornado pela API.
+ *
+ * @param {number} isDay -
+ * Indica se é dia (1) ou noite (0).
+ *
+ * @returns {string} Classe CSS da biblioteca Weather Icons.
+ *
+ * @example
+ * obterIconeClima(0, 1);
+ * // Retorna "wi-day-sunny"
+ */
 function obterIconeClima(codigo, isDay) {
 
     if (codigo === 0) {
@@ -323,6 +415,27 @@ function obterIconeClima(codigo, isDay) {
     return "wi-cloud";
 }
 
+
+/**
+ * Executa uma requisição HTTP com limite de tempo.
+ *
+ * @async
+ * @param {string} url - URL que será consultada.
+ * @param {number} [timeout=10000] -
+ * Tempo máximo da requisição em milissegundos.
+ *
+ * @returns {Promise<Response>} Resposta HTTP da requisição.
+ *
+ * @throws {Error} Se a requisição ultrapassar o tempo limite.
+ * @throws {Error} Se ocorrer um erro de rede.
+ *
+ * @example
+ * const response =
+ *     await fetchComTimeout(
+ *         "https://api.exemplo.com",
+ *         5000
+ *     );
+ */
 async function fetchComTimeout(url, timeout = TIMEOUT_API) {
 
     const controller = new AbortController();
@@ -364,6 +477,16 @@ async function fetchComTimeout(url, timeout = TIMEOUT_API) {
     }
 }
 
+
+/**
+ * Formata uma data e hora para português do Brasil.
+ *
+ * @param {string} data - Data e hora no formato ISO.
+ * @returns {string} Data e hora formatadas.
+ *
+ * @example
+ * formatarData("2026-08-12T16:15");
+ */
 function formatarData(data) {
 
     const dataFormatada = new Date(data);
@@ -382,6 +505,18 @@ function formatarData(data) {
 }
 
 
+/**
+ * Altera o tema visual de acordo com o período do dia.
+ *
+ * @param {number} isDay -
+ * Indica se é dia (1) ou noite (0).
+ *
+ * @returns {void}
+ *
+ * @example
+ * alterarTema(0);
+ * // Aplica o tema noturno.
+ */
 function alterarTema(isDay) {
 
     if (isDay === 1) {
@@ -397,6 +532,46 @@ function alterarTema(isDay) {
 }
 
 
+/**
+ * Exibe os dados meteorológicos na interface.
+ *
+ * @param {Object} coordenadas -
+ * Informações da localização.
+ *
+ * @param {string} coordenadas.nome -
+ * Nome da cidade.
+ *
+ * @param {string} coordenadas.pais -
+ * Nome do país.
+ *
+ * @param {Object} clima -
+ * Dados meteorológicos atuais.
+ *
+ * @param {number} clima.temperature_2m -
+ * Temperatura atual.
+ *
+ * @param {number} clima.weather_code -
+ * Código da condição meteorológica.
+ *
+ * @param {number} clima.is_day -
+ * Indica se é dia ou noite.
+ *
+ * @param {string} clima.time -
+ * Data e hora dos dados.
+ *
+ * @returns {void}
+ *
+ * @example
+ * exibirClima(
+ *     { nome: "São Paulo", pais: "Brasil" },
+ *     {
+ *         temperature_2m: 24,
+ *         weather_code: 3,
+ *         is_day: 1,
+ *         time: "2026-08-12T16:15"
+ *     }
+ * );
+ */
 function exibirClima(coordenadas, clima) {
 
     const descricao = obterDescricaoClima(
