@@ -50,6 +50,40 @@ describe(
                                 weather_code: 3,
                                 is_day: 1,
                                 time: "2026-08-12T16:15"
+                            },
+
+                            daily: {
+                                time: [
+                                    "2026-08-12",
+                                    "2026-08-13",
+                                    "2026-08-14",
+                                    "2026-08-15",
+                                    "2026-08-16"
+                                ],
+
+                                weather_code: [
+                                    3,
+                                    61,
+                                    2,
+                                    0,
+                                    45
+                                ],
+
+                                temperature_2m_max: [
+                                    25,
+                                    24,
+                                    27,
+                                    29,
+                                    22
+                                ],
+
+                                temperature_2m_min: [
+                                    17,
+                                    16,
+                                    18,
+                                    19,
+                                    15
+                                ]
                             }
                         })
                     });
@@ -238,6 +272,109 @@ describe(
                 ).rejects.toThrow(
                     "Formato inesperado"
                 );
+            }
+        );
+
+        test(
+            "8. Retorna previsão diária com temperaturas máximas e mínimas",
+            async () => {
+
+                // Mock da API de geolocalização
+                fetch.mockResolvedValueOnce({
+                    ok: true,
+                    status: 200,
+
+                    json: async () => ({
+                        results: [
+                            {
+                                name: "São Paulo",
+                                country: "Brasil",
+                                latitude: -23.55,
+                                longitude: -46.63
+                            }
+                        ]
+                    })
+                });
+
+
+                // Mock da API meteorológica
+                fetch.mockResolvedValueOnce({
+                    ok: true,
+                    status: 200,
+
+                    json: async () => ({
+                        current: {
+                            temperature_2m: 24,
+                            weather_code: 3,
+                            is_day: 1,
+                            time: "2026-08-13T15:00"
+                        },
+
+                        daily: {
+                            time: [
+                                "2026-08-13",
+                                "2026-08-14",
+                                "2026-08-15",
+                                "2026-08-16",
+                                "2026-08-17"
+                            ],
+
+                            weather_code: [
+                                3,
+                                61,
+                                2,
+                                0,
+                                45
+                            ],
+
+                            temperature_2m_max: [
+                                25,
+                                24,
+                                27,
+                                29,
+                                22
+                            ],
+
+                            temperature_2m_min: [
+                                17,
+                                16,
+                                18,
+                                19,
+                                15
+                            ]
+                        }
+                    })
+                });
+
+
+                const resultado =
+                    await consultarClima("São Paulo");
+
+
+                expect(resultado.previsao)
+                    .toBeDefined();
+
+
+                expect(resultado.previsao.time)
+                    .toHaveLength(5);
+
+
+                expect(
+                    resultado.previsao.temperature_2m_max
+                ).toEqual(
+                    [25, 24, 27, 29, 22]
+                );
+
+
+                expect(
+                    resultado.previsao.temperature_2m_min
+                ).toEqual(
+                    [17, 16, 18, 19, 15]
+                );
+
+
+                expect(fetch)
+                    .toHaveBeenCalledTimes(2);
             }
         );
 

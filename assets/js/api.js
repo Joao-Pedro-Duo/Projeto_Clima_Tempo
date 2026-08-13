@@ -65,6 +65,10 @@ const botaoVoltar = possuiDOM
     ? document.getElementById("botao-voltar")
     : null;
 
+const previsaoDias = possuiDOM
+    ? document.getElementById("previsao-dias")
+    : null;
+
 
 if (form) {
     form.addEventListener("submit", async (event) => {
@@ -171,7 +175,9 @@ async function consultarClima(cidade) {
         dataHora: clima.time,
 
         descricao:
-            obterDescricaoClima(clima.weather_code)
+            obterDescricaoClima(clima.weather_code),
+
+        previsao: clima.daily
     };
 }
 
@@ -249,7 +255,13 @@ async function buscarCoordenadas(cidade) {
 async function buscarClima(latitude, longitude) {
 
     const url =
-        `${WEATHER_API}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=auto`;
+    `${WEATHER_API}` +
+    `?latitude=${latitude}` +
+    `&longitude=${longitude}` +
+    `&current=temperature_2m,weather_code,is_day` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+    `&forecast_days=5` +
+    `&timezone=auto`;
 
     try {
 
@@ -271,12 +283,20 @@ async function buscarClima(latitude, longitude) {
             dados.current.temperature_2m === undefined ||
             dados.current.weather_code === undefined ||
             dados.current.is_day === undefined ||
-            dados.current.time === undefined
+            dados.current.time === undefined ||
+            !dados.daily ||
+            !Array.isArray(dados.daily.time) ||
+            !Array.isArray(dados.daily.weather_code) ||
+            !Array.isArray(dados.daily.temperature_2m_max) ||
+            !Array.isArray(dados.daily.temperature_2m_min)
         ) {
             throw new Error("Formato inesperado da resposta da API.");
         }
 
-        return dados.current;
+        return {
+            ...dados.current,
+            daily: dados.daily
+        };
 
     } catch (error) {
 
@@ -285,6 +305,96 @@ async function buscarClima(latitude, longitude) {
         }
 
         throw error;
+    }
+}
+
+/**
+ * Exibe a previsão meteorológica dos próximos dias.
+ *
+ * @param {Object} daily - Dados diários retornados pela Open-Meteo.
+ * @returns {void}
+ */
+function exibirPrevisaoDias(daily) {
+
+    previsaoDias.innerHTML = "";
+
+    for (
+        let indice = 1;
+        indice < daily.time.length;
+        indice++
+    ) {
+
+        const data =
+            formatarDataPrevisao(
+                daily.time[indice]
+            );
+
+        const codigo =
+            daily.weather_code[indice];
+
+        const temperaturaMaxima =
+            Math.round(
+                daily.temperature_2m_max[indice]
+            );
+
+        const temperaturaMinima =
+            Math.round(
+                daily.temperature_2m_min[indice]
+            );
+
+        const descricao =
+            obterDescricaoClima(codigo);
+
+        const icone =
+            obterIconeClima(codigo, 1);
+
+
+        const card =
+            document.createElement("article");
+
+        card.classList.add("previsao-card");
+
+
+        card.innerHTML = `
+            <div class="previsao-data">
+
+                <strong>
+                    ${data.diaSemana}
+                </strong>
+
+                <span>
+                    ${data.dataCompleta}
+                </span>
+
+            </div>
+
+
+            <div class="previsao-clima">
+
+                <i class="wi ${icone}"></i>
+
+                <span>
+                    ${descricao}
+                </span>
+
+            </div>
+
+
+            <div class="previsao-temperaturas">
+
+                <span class="temperatura-maxima">
+                    ▲ ${temperaturaMaxima}°
+                </span>
+
+                <span class="temperatura-minima">
+                    ▼ ${temperaturaMinima}°
+                </span>
+
+            </div>
+        `;
+
+
+        previsaoDias.appendChild(card);
     }
 }
 
@@ -506,6 +616,44 @@ function formatarData(data) {
 
 
 /**
+ * Formata uma data da previsão diária.
+ *
+ * @param {string} data - Data no formato YYYY-MM-DD.
+ * @returns {Object} Dia da semana e data formatada.
+ *
+ * @example
+ * formatarDataPrevisao("2026-08-14");
+ */
+function formatarDataPrevisao(data) {
+
+    const dataFormatada =
+        new Date(`${data}T12:00:00`);
+
+    const diaSemana =
+        dataFormatada.toLocaleDateString(
+            "pt-BR",
+            {
+                weekday: "long"
+            }
+        );
+
+    const dataCompleta =
+        dataFormatada.toLocaleDateString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "long"
+            }
+        );
+
+    return {
+        diaSemana,
+        dataCompleta
+    };
+}
+
+
+/**
  * Altera o tema visual de acordo com o período do dia.
  *
  * @param {number} isDay -
@@ -598,6 +746,9 @@ function exibirClima(coordenadas, clima) {
         `wi ${icone}`;
 
     alterarTema(clima.is_day);
+
+    // Exibir as próximas previsões de dias
+    exibirPrevisaoDias(clima.daily);
 
     buscaContainer.classList.add("hidden");
     resultadoContainer.classList.remove("hidden");

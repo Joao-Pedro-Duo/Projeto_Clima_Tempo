@@ -268,6 +268,120 @@ button {
     background-color: var(--blue-700);
 }
 
+.previsao-container {
+    width: 100%;
+
+    margin-top: var(--spacing-lg);
+}
+
+
+.previsao-container h3 {
+    margin-bottom: var(--spacing-md);
+
+    text-align: center;
+
+    font-size: 1.25rem;
+
+    color: var(--blue-700);
+}
+
+
+#previsao-dias {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--spacing-sm);
+}
+
+
+.previsao-card {
+    display: grid;
+
+    grid-template-columns:
+        1.3fr
+        1fr
+        0.7fr;
+
+    align-items: center;
+
+    gap: var(--spacing-sm);
+
+    padding: var(--spacing-sm);
+
+    background-color: var(--white);
+
+    border-radius: var(--radius-md);
+
+    box-shadow:
+        0 4px 14px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+.previsao-data {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.previsao-data strong {
+    color: var(--blue-700);
+
+    text-transform: capitalize;
+}
+
+
+.previsao-data span {
+    font-size: 0.85rem;
+
+    color: var(--gray-500);
+}
+
+
+.previsao-clima {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+
+.previsao-clima .wi {
+    margin-bottom: 0.3rem;
+
+    font-size: 2.3rem;
+
+    color: var(--blue-500);
+}
+
+
+.previsao-clima span {
+    font-size: 0.8rem;
+
+    color: var(--gray-500);
+}
+
+
+.previsao-temperaturas {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.4rem;
+
+    font-weight: 600;
+}
+
+
+.temperatura-maxima::first-letter {
+    color: #e76f51;
+}
+
+
+.temperatura-minima::first-letter {
+    color: #3498db;
+}
+
 
 /* =========================
    UTILITÁRIOS
@@ -353,6 +467,32 @@ button {
     border-radius: var(--radius-lg);
 
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 600px) {
+
+    .previsao-card {
+        grid-template-columns:
+            1fr
+            1fr
+            auto;
+    }
+
+
+    .previsao-data strong {
+        font-size: 0.9rem;
+    }
+
+
+    .previsao-data span,
+    .previsao-clima span {
+        font-size: 0.75rem;
+    }
+
+
+    .previsao-clima .wi {
+        font-size: 2rem;
+    }
 }
 
 #icone-clima {
