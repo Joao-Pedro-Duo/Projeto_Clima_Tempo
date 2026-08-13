@@ -99,11 +99,7 @@ if (form) {
 
         } catch (error) {
 
-            mensagemErro.innerHTML = `
-                <p class="erro">
-                    ${error.message}
-                </p>
-            `;
+            exibirErro(error.message);
 
             console.error(error);
         }
@@ -753,6 +749,27 @@ function exibirClima(coordenadas, clima) {
     buscaContainer.classList.add("hidden");
     resultadoContainer.classList.remove("hidden");
 }
+
+
+/**
+ * Exibe uma mensagem de erro de forma segura na interface.
+ *
+ * @param {string} mensagem - Mensagem que será apresentada ao usuário.
+ * @returns {void}
+ */
+function exibirErro(mensagem) {
+
+    mensagemErro.replaceChildren();
+
+    const paragrafo = document.createElement("p");
+
+    paragrafo.classList.add("erro");
+
+    paragrafo.textContent = mensagem;
+
+    mensagemErro.appendChild(paragrafo);
+}
+
 
 if (
     typeof module !== "undefined" &&

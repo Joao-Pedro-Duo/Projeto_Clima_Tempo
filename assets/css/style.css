@@ -382,6 +382,36 @@ button {
     color: #3498db;
 }
 
+.app-footer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+
+    margin-top: auto;
+    padding: var(--spacing-md);
+
+    text-align: center;
+    justify-content: center;
+
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+}
+
+.app-footer p {
+    margin: var(--spacing-xs) 0;
+}
+
+.app-footer a {
+    color: var(--blue-500);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
+
 
 /* =========================
    UTILITÁRIOS

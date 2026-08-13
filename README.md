@@ -311,6 +311,54 @@ O projeto foi desenvolvido com finalidade educacional para colocar em prática c
 - Documentação de código;
 - Uso de Inteligência Artificial como apoio ao desenvolvimento.
 
+## 📅 Previsão para os Próximos Dias
+
+A aplicação apresenta a previsão meteorológica para vários dias,
+incluindo:
+
+- Condição meteorológica;
+- Ícone correspondente;
+- Temperatura máxima;
+- Temperatura mínima;
+- Dia da semana e data.
+
+## 🔐 Segurança e Privacidade
+
+A aplicação não possui banco de dados e não mantém histórico próprio
+das cidades pesquisadas.
+
+As consultas são realizadas diretamente à API Open-Meteo através de HTTPS.
+
+A aplicação possui:
+
+- Tratamento de erros HTTP;
+- Tratamento de limite de requisições;
+- Timeout através de AbortController;
+- Validação de respostas da API;
+- Tratamento seguro das mensagens apresentadas na interface.
+
+As requisições são enviadas a um serviço externo e estão sujeitas à
+política de privacidade da Open-Meteo.
+
+Para mais detalhes, consulte `SECURITY_AUDIT.md`.
+
+## ⚖️ Licenciamento
+
+O código desenvolvido neste projeto utiliza a MIT License.
+
+Também são utilizados componentes de terceiros com licenças próprias,
+incluindo:
+
+- Open-Meteo — dados sob CC BY 4.0;
+- Weather Icons — SIL OFL 1.1 / MIT;
+- Jest — MIT.
+
+Consulte `NOTICE.md` para informações detalhadas sobre atribuições e
+licenciamento.
+
+> A API gratuita da Open-Meteo é utilizada neste projeto apenas para
+> finalidade educacional e não comercial.
+
 ## 📄 Licença
 
 Este projeto foi desenvolvido para fins educacionais.
