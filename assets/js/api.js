@@ -1,21 +1,61 @@
-if (typeof document !== "undefined") {
 
-    const form = document.getElementById('form-clima');
-    const inputCidade = document.getElementById('cidade');
+const GEOCODING_API =
+    "https://geocoding-api.open-meteo.com/v1/search";
 
-    const buscaContainer = document.getElementById('busca-container');
-    const resultadoContainer = document.getElementById('resultado-container');
+const WEATHER_API =
+    "https://api.open-meteo.com/v1/forecast";
 
-    const temperatura = document.getElementById('temperatura');
-    const localizacao = document.getElementById('localizacao');
-    const descricaoClima = document.getElementById('descricao-clima');
-    const dataConsulta = document.getElementById('data-consulta');
-    const iconeClima = document.getElementById('icone-clima');
-
-    const mensagemErro = document.getElementById('mensagem-erro');
-    const botaoVoltar = document.getElementById('botao-voltar');
+const TIMEOUT_API = 10000;
 
 
+const possuiDOM = typeof document !== "undefined";
+
+const form = possuiDOM
+    ? document.getElementById("form-clima")
+    : null;
+
+const inputCidade = possuiDOM
+    ? document.getElementById("cidade")
+    : null;
+
+const buscaContainer = possuiDOM
+    ? document.getElementById("busca-container")
+    : null;
+
+const resultadoContainer = possuiDOM
+    ? document.getElementById("resultado-container")
+    : null;
+
+const temperatura = possuiDOM
+    ? document.getElementById("temperatura")
+    : null;
+
+const localizacao = possuiDOM
+    ? document.getElementById("localizacao")
+    : null;
+
+const descricaoClima = possuiDOM
+    ? document.getElementById("descricao-clima")
+    : null;
+
+const dataConsulta = possuiDOM
+    ? document.getElementById("data-consulta")
+    : null;
+
+const iconeClima = possuiDOM
+    ? document.getElementById("icone-clima")
+    : null;
+
+const mensagemErro = possuiDOM
+    ? document.getElementById("mensagem-erro")
+    : null;
+
+const botaoVoltar = possuiDOM
+    ? document.getElementById("botao-voltar")
+    : null;
+
+
+if (form) {
     form.addEventListener("submit", async (event) => {
 
         // Impede o recarregamento da página
@@ -55,7 +95,9 @@ if (typeof document !== "undefined") {
 
 
     });
+}
 
+if(botaoVoltar) {
     botaoVoltar.addEventListener("click", () => {
 
     resultadoContainer.classList.add("hidden");
@@ -67,8 +109,7 @@ if (typeof document !== "undefined") {
     mensagemErro.innerHTML = "";
 
     inputCidade.focus();
-});
-
+    });
 }
 
 async function consultarClima(cidade) {
@@ -109,51 +150,41 @@ async function consultarClima(cidade) {
 async function buscarCoordenadas(cidade) {
 
     const url =
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cidade)}&count=1&language=pt&format=json`;
+        `${GEOCODING_API}?name=${encodeURIComponent(cidade)}&count=1&language=pt&format=json`;
 
-    try {
+    const response = await fetchComTimeout(url);
 
-        const response = await fetchComTimeout(url);
-
-        if (response.status === 429) {
+    if (response.status === 429) {
         throw new Error(
             "Limite de requisições excedido.");
-        }
-
-        if (!response.ok) {
-            throw new Error("Falha da API de geolocalização.");
-        }
-
-        const dados = await response.json();
-
-        if (!dados.results || dados.results.length === 0) {
-            throw new Error("Cidade não encontrada. Tente novamente.");
-        }
-
-        const cidadeEncontrada = dados.results[0];
-
-        return {
-            nome: cidadeEncontrada.name,
-            pais: cidadeEncontrada.country,
-            latitude: cidadeEncontrada.latitude,
-            longitude: cidadeEncontrada.longitude
-        };
-
-    } catch (error) {
-
-        if (error instanceof TypeError) {
-            throw new Error("Erro de conexão. Verifique sua internet.");
-        }
-
-        throw error;
     }
+
+    if (!response.ok) {
+        throw new Error("Falha da API de geolocalização.");
+    }
+
+    const dados = await response.json();
+
+    if (!dados.results || dados.results.length === 0) {
+        throw new Error("Cidade não encontrada. Tente novamente.");
+    }
+
+    const cidadeEncontrada = dados.results[0];
+
+    return {
+        nome: cidadeEncontrada.name,
+        pais: cidadeEncontrada.country,
+        latitude: cidadeEncontrada.latitude,
+        longitude: cidadeEncontrada.longitude
+    };
+
 }
 
 
 async function buscarClima(latitude, longitude) {
 
     const url =
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=auto`;
+        `${WEATHER_API}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=auto`;
 
     try {
 
@@ -292,7 +323,7 @@ function obterIconeClima(codigo, isDay) {
     return "wi-cloud";
 }
 
-async function fetchComTimeout(url, timeout = 5000) {
+async function fetchComTimeout(url, timeout = TIMEOUT_API) {
 
     const controller = new AbortController();
 
@@ -315,7 +346,7 @@ async function fetchComTimeout(url, timeout = 5000) {
 
         if (error.name === "AbortError") {
             throw new Error(
-                "Tempo limite da requisição excedido."
+                "A consulta demorou mais que o esperado. Tente novamente."
             );
         }
 

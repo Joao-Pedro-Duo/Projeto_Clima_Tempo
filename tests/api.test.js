@@ -3,16 +3,19 @@ const {
     fetchComTimeout
 } = require("../assets/js/api");
 
+const fetchOriginal = global.fetch;
 
 describe(
     "Testes Unitários - App de Clima",
     () => {
 
         beforeEach(() => {
-
             global.fetch = jest.fn();
+        });
 
+        afterEach(() => {
             jest.clearAllMocks();
+            global.fetch = fetchOriginal;
         });
 
 
@@ -193,7 +196,7 @@ describe(
                         20
                     )
                 ).rejects.toThrow(
-                    "Tempo limite"
+                    "A consulta demorou mais que o esperado"
                 );
             }
         );
